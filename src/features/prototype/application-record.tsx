@@ -4,7 +4,13 @@ import { ProcessTimeline } from "@/components/process-timeline";
 import { RecordSheet } from "@/components/record-sheet";
 import { CvAttachment } from "./cv-attachment";
 import { MatchScore } from "./match-score";
+import {
+  CandidateContributionCard,
+  candidateContributionToText,
+  parseCandidateContribution,
+} from "./candidate-contribution-card";
 import { stageLabels, type Application, type Stage } from "./model";
+import { buttonVariants } from "@/components/ui/button";
 
 type RecordEvent = { stage: Stage; at: string; note?: string };
 const dateFormat = new Intl.DateTimeFormat("pl-PL", {
@@ -24,7 +30,15 @@ export function ApplicationRecord({
 }: {
   application: Pick<
     Application,
-    "candidateId" | "candidateName" | "jobTitle" | "stage" | "answer" | "cv" | "score" | "summary"
+    | "candidateId"
+    | "candidateName"
+    | "jobTitle"
+    | "stage"
+    | "answer"
+    | "cv"
+    | "sourceNotes"
+    | "score"
+    | "summary"
   >;
   companyName: string;
   audience: "candidate" | "employer";
@@ -37,6 +51,7 @@ export function ApplicationRecord({
   const title = candidate ? application.jobTitle : application.candidateName;
   const context = candidate ? application.candidateName : application.jobTitle;
   const submitted = history[0];
+  const contribution = parseCandidateContribution(application.sourceNotes, application.candidateId);
   return (
     <article className="recruiting-record">
       <header className="recruiting-header">
@@ -93,6 +108,34 @@ export function ApplicationRecord({
                 </>
               ),
             },
+            ...(!candidate
+              ? [
+                  {
+                    value: "contribution",
+                    label: "Wkład kandydata",
+                    content: (
+                      <>
+                        <div className="record-material-header">
+                          <div>
+                            <h3>Karta własnego wkładu kandydata</h3>
+                            <p className="record-caption">
+                              Materiał z aplikacji, przygotowany przez {application.candidateName}.
+                            </p>
+                          </div>
+                          <a
+                            className={buttonVariants({ variant: "outline", size: "sm" })}
+                            download={`karta-wlasnego-wkladu-${application.candidateId}.txt`}
+                            href={`data:text/plain;charset=utf-8,${encodeURIComponent(candidateContributionToText(application.candidateName, contribution))}`}
+                          >
+                            Pobierz kartę
+                          </a>
+                        </div>
+                        <CandidateContributionCard value={contribution} readOnly />
+                      </>
+                    ),
+                  },
+                ]
+              : []),
           ]}
           footer={footer}
         >

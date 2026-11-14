@@ -163,6 +163,160 @@
   line-height: 1.6;
   color: var(--gui-text-muted);
 }
+.candidate-contribution {
+  margin: 0 24px 8px;
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--gui-color-1) 36%, var(--pp-line));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--gui-color-1-transparent) 72%, var(--gui-color-2));
+}
+.candidate-contribution-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--pp-line);
+}
+.candidate-contribution-kicker {
+  color: var(--gui-link);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.candidate-contribution-header h3 {
+  margin-top: 7px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+.candidate-contribution-header p:not(.candidate-contribution-kicker) {
+  max-width: 620px;
+  margin-top: 8px;
+  color: var(--gui-text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.candidate-contribution-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--gui-link) 55%, transparent);
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: var(--gui-link);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.candidate-contribution-signal span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gui-link);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gui-link) 18%, transparent);
+}
+.candidate-contribution-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  padding-block: 20px 18px;
+}
+.candidate-contribution-item {
+  min-width: 0;
+}
+.candidate-contribution-label {
+  display: flex;
+  align-items: center;
+  color: var(--gui-text);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+.candidate-contribution-item textarea,
+.candidate-contribution-clarify textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--gui-edge);
+  border-radius: 9px;
+  background: var(--gui-control);
+  color: var(--gui-text);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.7;
+  margin-top: 6px;
+  min-height: 118px;
+  padding: 10px 11px;
+  overflow-wrap: anywhere;
+}
+.candidate-contribution-item textarea:focus-visible,
+.candidate-contribution-clarify textarea:focus-visible {
+  outline: 2px solid var(--gui-focus);
+  outline-offset: 2px;
+}
+.candidate-contribution-item textarea:disabled,
+.candidate-contribution-clarify textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+.candidate-contribution-clarify textarea {
+  min-height: 118px;
+  margin-top: 6px;
+}
+.candidate-contribution-item p {
+  margin-top: 8px;
+  color: var(--gui-text);
+  font-size: 14px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.candidate-contribution-readonly-value {
+  margin-top: 8px;
+  color: var(--gui-text);
+  font-size: 16px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.candidate-contribution-clarify {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  border-top: 1px solid var(--pp-line);
+  padding-top: 16px;
+  color: var(--gui-text-muted);
+}
+.candidate-contribution-clarify > svg:first-child {
+  width: 17px;
+  height: 17px;
+  margin-top: 2px;
+  color: var(--gui-link);
+}
+.candidate-contribution-clarify strong {
+  color: var(--gui-text);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.candidate-contribution-clarify p {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.candidate-contribution-clarify .candidate-contribution-readonly-value {
+  margin-top: 6px;
+}
+.candidate-contribution-arrow {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--gui-text-muted);
+}
 .application-form p {
   overflow-wrap: anywhere;
 }
@@ -280,6 +434,20 @@
   }
   .application-submit {
     padding-bottom: 0;
+  }
+  .candidate-contribution {
+    margin-inline: 16px;
+    padding: 18px;
+  }
+  .candidate-contribution-header {
+    display: block;
+  }
+  .candidate-contribution-signal {
+    margin-top: 14px;
+  }
+  .candidate-contribution-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
   .application-actions {
     flex-direction: column;

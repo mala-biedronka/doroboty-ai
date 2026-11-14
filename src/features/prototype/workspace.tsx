@@ -16,6 +16,11 @@ import { CvAttachment } from "./cv-attachment";
 import { MatchScore } from "./match-score";
 import { RecruitingApplication } from "./recruiting-application";
 import { CandidateApplication } from "./candidate-application";
+import {
+  CandidateContributionCard,
+  getCandidateContribution,
+  type CandidateContribution,
+} from "./candidate-contribution-card";
 
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -236,9 +241,13 @@ export function ApplyPage() {
   const navigate = useNavigate();
   const job = publishedJobs(state).find((x) => x.slug === slug);
   const draft = state.drafts.find((x) => x.jobId === job?.id && x.candidateId === person.id);
-  const notes = draft?.notes ?? "";
+  const showContribution = !draft || draft.notes.trim().startsWith("{");
   const generated = draft?.generated ?? "";
   const [answer, setAnswer] = useState(draft?.answer ?? "");
+  const [contribution, setContribution] = useState<CandidateContribution>(() =>
+    getCandidateContribution(person.id),
+  );
+  const draftNotes = showContribution ? JSON.stringify(contribution) : (draft?.notes ?? "");
   const [consent, setConsent] = useState(false);
   const [message, setMessage] = useState("");
   const [attempted, setAttempted] = useState(false);
@@ -281,7 +290,16 @@ export function ApplyPage() {
       document.getElementById("application-consent")?.focus();
       return;
     }
-    if (run({ type: "submit", jobId: job!.id, notes, generated, answer, consent })) {
+    if (
+      run({
+        type: "submit",
+        jobId: job!.id,
+        notes: draftNotes,
+        generated,
+        answer,
+        consent,
+      })
+    ) {
       submittedOnce.current = true;
       setSubmitted(true);
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -312,6 +330,15 @@ export function ApplyPage() {
               Aplikujesz jako <strong>{person.name}</strong>.
             </p>
           </header>
+          {showContribution && (
+            <CandidateContributionCard
+              value={contribution}
+              disabled={submitted}
+              onChange={(key, value) =>
+                setContribution((current) => ({ ...current, [key]: value }))
+              }
+            />
+          )}
           <section className="application-form-section" aria-labelledby="application-cv-title">
             <h3 id="application-cv-title">Twoje CV</h3>
             <p className="application-help">Do aplikacji dołączymy CV z Twojego profilu.</p>
@@ -387,7 +414,15 @@ export function ApplyPage() {
                 disabled={submitted}
                 variant="outline"
                 onClick={() => {
-                  if (run({ type: "draft", jobId: job.id, notes, generated, answer }))
+                  if (
+                    run({
+                      type: "draft",
+                      jobId: job.id,
+                      notes: draftNotes,
+                      generated,
+                      answer,
+                    })
+                  )
                     setMessage("Szkic został zapisany.");
                 }}
               >
