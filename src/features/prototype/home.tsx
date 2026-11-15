@@ -6,6 +6,7 @@ import { JobCard } from "@/features/jobs/job-card";
 import { usePrototype } from "./store";
 import { publishedJobs } from "./model";
 import { cn } from "@/lib/utils";
+import posthog from "posthog-js";
 
 import peopleArt from "../../../docs/design-system/agent-kit/assets/people.png";
 
@@ -47,7 +48,11 @@ export default function HomePage() {
               pracy — nie dopiskiem w employer brandingu.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/oferty" className={buttonVariants({ size: "lg" })}>
+              <Link
+                to="/oferty"
+                className={buttonVariants({ size: "lg" })}
+                onClick={() => posthog.capture("zobacz_oferty_clicked")}
+              >
                 Zobacz oferty <ArrowRight />
               </Link>
               <Link
