@@ -3,6 +3,26 @@ import { createRoot } from "react-dom/client";
 import posthog from "posthog-js";
 import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import { App } from "./features/prototype/app";
+import posthog from "posthog-js";
+
+const posthogKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+const posthogHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
+
+if (posthogKey) {
+  posthog.init(posthogKey, {
+    api_host: posthogHost,
+    autocapture: true,
+    person_profiles: "identified_only",
+    capture_pageview: true,
+    capture_pageleave: true,
+    disable_session_recording: false,
+    session_recording: {
+      maskAllInputs: true,
+      maskAllElementAttributes: true,
+      blockSelector: ".ph-no-capture",
+    },
+  });
+}
 import "./app/globals.css";
 
 const posthogToken = import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN;

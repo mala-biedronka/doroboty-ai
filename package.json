@@ -14,6 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "release:verify": "npm run check",
+    "release:build": "npm run build",
     "check": "npm run format:check && npm run design-system:check && npm run lint && npm run typecheck && npm test && npm run verify:packet && npm run build && npm run test:e2e",
     "package:participant": "node scripts/package-participant.mjs",
     "verify:packet": "node scripts/verify-participant.mjs",

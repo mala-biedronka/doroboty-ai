@@ -95,7 +95,11 @@ export function CandidateContributionCard({
   readOnly?: boolean;
 }) {
   return (
-    <section className="candidate-contribution" aria-labelledby="contribution-title">
+    <section
+      className="candidate-contribution ph-no-capture"
+      data-ph-no-capture="true"
+      aria-labelledby="contribution-title"
+    >
       <div className="candidate-contribution-header">
         <div>
           <p className="candidate-contribution-kicker">E01 · dowód własnego wkładu</p>
