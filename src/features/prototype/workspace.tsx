@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router";
 import { CheckCircle2, FileText } from "lucide-react";
+import { usePostHog } from "@posthog/react";
 import { ConfettiBurst, type ConfettiOrigin } from "@/components/confetti-burst";
 import { BackLink } from "@/components/back-link";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -22,6 +23,10 @@ import {
   type CandidateContribution,
 } from "./candidate-contribution-card";
 
+const posthogEnabled = Boolean(
+  import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN && import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+);
+
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="field">
@@ -32,6 +37,7 @@ export function Field({ label, children }: { label: string; children: ReactNode 
 }
 export function PersonPicker() {
   const { state, run } = usePrototype();
+  const posthog = usePostHog();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const next = params.get("next");
@@ -55,7 +61,10 @@ export function PersonPicker() {
             <Button
               variant="outline"
               onClick={() => {
-                run({ type: "select_person", id: person.id });
+                if (run({ type: "select_person", id: person.id }) && posthogEnabled) {
+                  posthog.capture("persona_selected", { role: person.role });
+                  posthog.logger.info("persona selected", { role: person.role });
+                }
                 navigate(
                   person.role === "candidate"
                     ? (safeNext ?? "/app")
@@ -146,6 +155,7 @@ export function WorkspaceHome() {
 }
 export function ProfilePage({ preview = false }: { preview?: boolean }) {
   const { state, run } = usePrototype();
+  const posthog = usePostHog();
   const person = currentPerson(state)!;
   const [message, setMessage] = useState("");
   function save(e: FormEvent<HTMLFormElement>) {
@@ -161,8 +171,10 @@ export function ProfilePage({ preview = false }: { preview?: boolean }) {
           location: String(data.get("location")),
         },
       })
-    )
+    ) {
+      if (posthogEnabled) posthog.capture("candidate_profile_saved");
       setMessage("Profil został zapisany.");
+    }
   }
   return (
     <>
@@ -237,6 +249,7 @@ export function SavedPage() {
 export function ApplyPage() {
   const { slug } = useParams();
   const { state, run } = usePrototype();
+  const posthog = usePostHog();
   const person = currentPerson(state)!;
   const navigate = useNavigate();
   const job = publishedJobs(state).find((x) => x.slug === slug);
@@ -300,6 +313,20 @@ export function ApplyPage() {
         consent,
       })
     ) {
+      if (posthogEnabled) {
+        posthog.capture("application_submitted", {
+          job_id: job!.id,
+          job_category: job!.category,
+          remote_status: job!.remoteStatus,
+          has_generated_answer: Boolean(generated),
+        });
+        posthog.logger.info("application submitted", {
+          job_id: job!.id,
+          job_category: job!.category,
+          remote_status: job!.remoteStatus,
+          has_generated_answer: Boolean(generated),
+        });
+      }
       submittedOnce.current = true;
       setSubmitted(true);
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -422,8 +449,14 @@ export function ApplyPage() {
                       generated,
                       answer,
                     })
-                  )
+                  ) {
+                    if (posthogEnabled)
+                      posthog.capture("application_draft_saved", {
+                        job_id: job.id,
+                        has_generated_answer: Boolean(generated),
+                      });
                     setMessage("Szkic został zapisany.");
+                  }
                 }}
               >
                 Zapisz szkic
