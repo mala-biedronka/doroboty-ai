@@ -51,7 +51,13 @@ export default function HomePage() {
               <Link
                 to="/oferty"
                 className={buttonVariants({ size: "lg" })}
-                onClick={() => posthog.capture("zobacz_oferty_clicked")}
+                onClick={() =>
+                  posthog.capture(
+                    "zobacz_oferty_clicked",
+                    { button_label: "Zobacz oferty" },
+                    { send_instantly: true, transport: "sendBeacon" },
+                  )
+                }
               >
                 Zobacz oferty <ArrowRight />
               </Link>
